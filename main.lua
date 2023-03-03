@@ -33,6 +33,8 @@ local spawnTimer = 0
 
 local lastY = -PIPE_HEIGHT + math.random(80) + 20
 
+local scrolling = true
+
 function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest')
 
@@ -71,6 +73,7 @@ end
 
  
 function love.update(dt)
+  if scrolling then
     backgroundScroll = (backgroundScroll + BACKGROUND_SCROLL_SPEED * dt) 
         % BACKGROUND_LOOPING_POINT
 
@@ -91,6 +94,15 @@ function love.update(dt)
     
     for k, pair in pairs(pipePairs) do
       pair:update(dt)
+
+      for l, pipe in pair(pair.pipe) do
+        if cat:collides(pipe) then
+          scrolling = false
+      end
+
+      if pair.x < -PIPE_WIDTH then
+        pair.remove = true
+      end
     end
 
     for k, pair in pairs(pipePairs) do
@@ -98,6 +110,7 @@ function love.update(dt)
           table.remove(pipePairs, k)
       end
     end
+  end
     
     love.keyboard.keysPressed = {}
 end
