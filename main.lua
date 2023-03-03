@@ -95,9 +95,10 @@ function love.update(dt)
     for k, pair in pairs(pipePairs) do
       pair:update(dt)
 
-      for l, pipe in pair(pair.pipe) do
+      for l, pipe in pairs(pair.pipes) do
         if cat:collides(pipe) then
           scrolling = false
+        end
       end
 
       if pair.x < -PIPE_WIDTH then
