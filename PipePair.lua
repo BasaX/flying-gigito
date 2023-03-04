@@ -1,9 +1,11 @@
 PipePair = Class{}
 
-local GAP_HEIGHT = 90
+GAP_HEIGHT = math.random(60, 90)
+
+X_DISTANCE = math.random(20, 32) 
 
 function PipePair:init(y)
-    self.x = VIRTUAL_WIDTH + 32
+    self.x = VIRTUAL_WIDTH + X_DISTANCE
 
     self.y = y
 
@@ -13,6 +15,8 @@ function PipePair:init(y)
     }
 
     self.remove = false
+
+    self.scored = false
 end
 
 function PipePair:update(dt)
