@@ -14,6 +14,7 @@ require 'states/PlayState'
 require 'states/ScoreState'
 require 'states/CountdownState'
 require 'states/TitleScreenState'
+require 'states/PauseState'
 
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
@@ -35,6 +36,8 @@ local BACKGROUND_LOOPING_POINT = 413
 local GROUND_LOOPING_POINT = 514
 
 local scrolling = true
+
+gPause = false
 
 function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest')
@@ -71,6 +74,7 @@ function love.load()
       ['countdown'] = function() return CountdownState() end,
       ['play'] = function() return PlayState() end,
       ['score'] = function() return ScoreState() end,
+      ['pause'] = function() return PauseState() end,
     }
     gStateMachine:change('title')
 
@@ -81,23 +85,6 @@ function love.resize(w, h)
     push:resize(w, h)
 end
 
-function love.keypressed(key)
-    love.keyboard.keysPressed[key] = true
-
-    if key == 'escape' then
-        love.event.quit()
-    end
-end
-
-function love.keyboard.wasPressed(key)
-    if love.keyboard.keysPressed[key] then
-      return true
-    else
-      return false
-    end
-end
-
- 
 function love.update(dt)
     backgroundScroll = (backgroundScroll + BACKGROUND_SCROLL_SPEED * dt) 
         % BACKGROUND_LOOPING_POINT
@@ -110,14 +97,44 @@ function love.update(dt)
     love.keyboard.keysPressed = {}
 end
 
+function love.keypressed(key, unicode)
+    love.keyboard.keysPressed[key] = true
+
+    if key == 'escape' then
+        love.event.quit()
+    end
+
+    if key == 'p' then gPause = not gPause end
+end
+
+function love.keyboard.wasPressed(key)
+    if love.keyboard.keysPressed[key] then
+      return true
+    else
+      return false
+    end
+end
+
 function love.draw()
+
+    if gPause then
+      push:start()
+      love.graphics.draw(background, -backgroundScroll, 0)  
+      love.graphics.draw(ground, -groundScroll, VIRTUAL_HEIGHT - 16)
+      love.graphics.setFont(gameFont)
+      love.graphics.printf("Game Paused", 0, 64, VIRTUAL_WIDTH, 'center') 
+      love.graphics.printf('Press P to Play Again!', 0, 160, VIRTUAL_WIDTH, 'center')
+      push:finish()
+      return 
+    end
+  
     push:start()
-    
+  
     love.graphics.draw(background, -backgroundScroll, 0)
-
+  
     gStateMachine:render()
-
+  
     love.graphics.draw(ground, -groundScroll, VIRTUAL_HEIGHT - 16)
-
+  
     push:finish()
 end

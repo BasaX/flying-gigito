@@ -53,7 +53,9 @@ function StateMachine:change(stateName, enterParams)
 end
 
 function StateMachine:update(dt)
-	self.current:update(dt)
+  if not gPause then 
+    self.current:update(dt)
+  end
 end
 
 function StateMachine:render()

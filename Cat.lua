@@ -28,7 +28,11 @@ function Cat:update(dt)
     self.dy = self.dy + GRAVITY * dt
 
     if love.keyboard.wasPressed('space') then
-      self.dy = -4
+      self.dy = -3
+      sounds['jump']:play()
+    end
+    if love.keyboard.wasPressed('w') then
+      self.dy = -5
       sounds['jump']:play()
     end
 
